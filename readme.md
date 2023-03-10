@@ -16,7 +16,7 @@
 
 <div style="width:100%; margin-top:3rem;display:flex;justify-content:center;">
   <image 
-    src="./images/DSCF4479.jpg"
+    src="./images/DSCF4479.JPG"
     alt="logo"
     width="650px"
     height="400px"
@@ -26,7 +26,7 @@
 
 <div style="width:100%; margin-top:3rem;display:flex;justify-content:center;">
   <image 
-    src="./images/DSCF4481.jpg"
+    src="./images/DSCF4481.JPG"
     alt="logo"
     width="650px"
     height="400px"
@@ -36,7 +36,7 @@
 
 <div style="width:100%; margin-top:3rem;display:flex;justify-content:center;">
   <image 
-    src="./images/DSCF4482.jpg"
+    src="./images/DSCF4482.JPG"
     alt="logo"
     width="650px"
     height="400px"
@@ -46,7 +46,7 @@
 
 <div style="width:100%; margin-top:3rem;display:flex;justify-content:center;">
   <image 
-    src="./images/Machine.jpg"
+    src="./images/Machine.JPG"
     alt="logo"
     width="650px"
     height="400px"
