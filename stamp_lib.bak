@@ -1,0 +1,1150 @@
+
+#define Operate_All_Process    0xFF
+#define Check_Stamp            0xBF
+#define Stamp_Only             0xAF
+
+int16 cnt;
+
+void _StatusIO_(void);
+void StampOnly(void); 
+void Initial_SenSor(void); 
+
+void Trig_Counter(void);
+void Buzzer_Alarm(byte tot);
+void Buzzer_LongBeep(void);
+void Start_Buzzer(void);
+void Buzzer_Config(void);
+void Buzzer_Beep(void);
+void Display_CylinderError(void); 
+void Clear_Led(void); 
+void Diplay_Ready(void);
+void Clear_LCD(void);
+void _StatusIO_(void);
+
+void OperateAll(void); 
+void Check_R_Stamp(void);
+void ProcessMode(byte Mc);
+void InsertData(float a, float b, float c);
+void Initial_StageRobot(void);
+
+void LED_RED(void);
+void LED_GREEN(void);
+
+boolean MOVE_GT(void);
+boolean ORIGIN_GT(void);
+
+boolean ORIGIN_STAMP(void);
+boolean MOVE_STAMP(void);
+
+boolean ORIGIN_PIN(void);
+boolean MOVE_PIN(void);
+
+boolean MOVE_BLOCK(void); 
+boolean ORIGIN_BLOCK(void);
+
+boolean MOVE_QR(void);
+boolean ORIGIN_QR(void);
+
+boolean MOVE_LEFT(void);
+boolean MOVE_RIGHT(void);
+
+boolean MOVE_LEFT2(void);
+boolean MOVE_RIGHT2(void);
+
+boolean Resistance(void);
+boolean Resistance3(void);
+boolean JudgeMentCoil(int8 Jc);
+boolean Check_Screw(boolean sc1,boolean sc2,boolean sc3);
+
+//##############################################################################
+
+//------------------------------------------------------------------------------
+//-------------------   CYLINDER STAMP MOVE
+boolean MOVE_STAMP(void)
+{
+   boolean ret;
+          if( !input(SS_STAMP_UP) )
+               output_low(SV_STAMP);
+               
+            for(cnt = 0; cnt < TimeOut; cnt++)
+               {
+                  if( !input(SS_STAMP_DOWN ) )
+                     {
+                        ret = TRUE;
+                        goto End_MOVE;
+                     }
+                  delay_ms(1);   
+               }
+         
+    ret = FALSE;
+    Display_CylinderError();
+    LED_RED();
+    Buzzer_Alarm(15);
+    output_high(SV_STAMP);
+    
+    End_MOVE :     
+    return(ret);
+}
+
+//------------------------------------------------------------------------------
+//-------------------   CYLINDER STAMP MOVE ORIGIN
+boolean ORIGIN_STAMP(void)
+{
+   boolean ret;
+    if(!input(SS_STAMP_DOWN))
+         output_high(SV_STAMP);
+         
+      for(cnt = 0; cnt < TimeOut; cnt++)
+         {
+            if(!input(SS_STAMP_UP))
+               {
+                  ret = TRUE;
+                  goto End_ORIGIN;
+               }
+            delay_ms(1);   
+         }
+         
+    ret = FALSE;
+    Display_CylinderError();
+    LED_RED();
+    Buzzer_Alarm(15);
+    output_low(SV_STAMP);
+    
+    End_ORIGIN :     
+    return(ret);
+}
+
+
+//------------------------------------------------------------------------------
+//-------------------   CYLINDER PIN MOVE
+boolean MOVE_PIN(void)
+{
+   boolean ret;
+   
+    if( !input(SS_COIL_UP)  )
+         output_low(SV_COILS);
+      for(cnt = 0; cnt < TimeOut; cnt++)
+         {
+            if( !input(SS_COIL_DOWN) )
+               {
+                  ret = TRUE;
+                  goto End_MOVE;
+               }
+            delay_ms(1);   
+         }
+    
+    ret = FALSE;
+    Display_CylinderError();
+    LED_RED();
+    Buzzer_Alarm(15);
+    output_high(SV_COILS);
+    
+    End_MOVE :     
+    return(ret);
+}
+
+//------------------------------------------------------------------------------
+//-------------------   CYLINDER PIN MOVE ORIGIN
+boolean ORIGIN_PIN(void)
+{
+   boolean ret;
+    if( (!input(SS_COIL_DOWN)) )
+         output_high(SV_COILS);
+      for(cnt = 0; cnt < TimeOut; cnt++)
+         {
+            if( (!input(SS_COIL_UP)) )
+               {
+                  ret = TRUE;
+                  goto End_ORIGIN;
+               }
+            delay_ms(1);   
+         }
+         
+    ret = FALSE;
+    Display_CylinderError();
+    LED_RED();
+    Buzzer_Alarm(15);
+    output_low(SV_COILS);
+    
+    End_ORIGIN :     
+    return(ret);
+}
+
+
+//------------------------------------------------------------------------------
+//-------------------   CYLINDER SCREW MOVE
+boolean MOVE_GT(void) 
+{
+   boolean ret;
+   
+    if( input(SS_SCREW_UP) )
+         output_low(SV_SCREW);
+      for(cnt = 0; cnt < TimeOut; cnt++)
+         {
+            if( !input(SS_SCREW_UP) )
+               {
+                  ret = TRUE;
+                  goto End_MOVE;
+               }
+            delay_ms(1);   
+         }
+    
+    ret = FALSE;
+    Display_CylinderError();
+    LED_RED();
+    Buzzer_Alarm(15);
+    output_high(SV_SCREW);
+    
+    End_MOVE :     
+    return(ret);
+}
+
+//------------------------------------------------------------------------------
+//-------------------   CYLINDER SCREW MOVE ORIGIN
+boolean ORIGIN_GT(void)
+{
+   boolean ret;
+    if( !input(SS_SCREW_UP) )
+         output_high(SV_SCREW);
+      for(cnt = 0; cnt < TimeOut; cnt++)
+         {
+            if( input(SS_SCREW_UP) )
+               {
+                  ret = TRUE;
+                  goto End_ORIGIN;
+               }
+            delay_ms(1);   
+         }
+         
+    ret = FALSE;
+    Display_CylinderError();
+    LED_RED();
+    Buzzer_Alarm(15);
+    output_low(SV_SCREW);
+    
+    End_ORIGIN :     
+    return(ret);
+}
+
+//------------------------------------------------------------------------------
+//-------------------   MOVE AXIS IN QR CODE
+boolean MOVE_BLOCK(void) 
+{
+   boolean ret;
+   
+    if( (!input(SS_UNLOCK)) )
+         output_low(SV_LOCK);
+      for(cnt = 0; cnt < TimeOut; cnt++)
+         {
+            if( (!input(SS_LOCK)) )
+               {
+                  ret = TRUE;
+                  goto End_MOVE;
+               }
+            delay_ms(1);   
+         }
+    
+    ret = FALSE;
+    Display_CylinderError();
+    LED_RED();
+    Buzzer_Alarm(15);
+    output_high(SV_LOCK);
+    
+    End_MOVE :     
+    return(ret);
+}
+
+//------------------------------------------------------------------------------
+//-------------------   MOVE AXIS IN QR CODE TO ORIGIN
+boolean ORIGIN_BLOCK(void)
+{
+   boolean ret;
+    if( (!input(SS_LOCK)) )
+         output_high(SV_LOCK);
+      for(cnt = 0; cnt < TimeOut; cnt++)
+         {
+            if( (!input(SS_UNLOCK)) )
+               {
+                  ret = TRUE;
+                  goto End_ORIGIN;
+               }
+            delay_ms(1);   
+         }
+         
+    ret = FALSE;
+    Display_CylinderError();
+    LED_RED();
+    Buzzer_Alarm(15);
+    output_low(SV_LOCK);
+    
+    End_ORIGIN :     
+    return(ret);
+}
+
+
+//------------------------------------------------------------------------------
+//-------------------   MOVE QR CODE FOR READ DATA
+boolean MOVE_QR(void) 
+{
+   boolean ret;
+   
+    if( !input(SS_QR_UP) )
+         output_low(SV_QR);
+    //else { output_high(LEDG); output_low(LEDR); delay_ms(500); }
+      for(cnt = 0; cnt < TimeOut; cnt++)
+         {
+            if( !input(SS_QR_DOWN) )
+               {
+                  ret = TRUE;
+                  goto End_MOVE;
+               }
+            delay_ms(1);   
+         }
+    
+    ret = FALSE;
+    Display_CylinderError();
+    LED_RED();
+    Buzzer_Alarm(15);
+    output_high(SV_QR);
+    
+    End_MOVE :     
+    return(ret);
+}
+
+//------------------------------------------------------------------------------
+//-------------------   MOVE QR CODE TO ORIGIN FOR READ DATA 
+boolean ORIGIN_QR(void)
+{
+   boolean ret;
+    if( !input(SS_QR_DOWN) )
+         output_high(SV_QR);
+      for(cnt = 0; cnt < TimeOut; cnt++)
+         {
+            if( !input(SS_QR_UP) )
+               {
+                  ret = TRUE;
+                  goto End_ORIGIN;
+               }
+            delay_ms(1);   
+         }
+         
+    ret = FALSE;
+    Display_CylinderError();
+    LED_RED();
+    Buzzer_Alarm(15);
+    output_low(SV_QR);
+    
+    End_ORIGIN :     
+    return(ret);
+}
+
+//------------------------------------------------------------------------------
+//-------------------   MOVE INK TRAY FOR STAMP
+boolean MOVE_RIGHT(void)
+{
+   boolean ret;
+                  
+    if( (!input(SS_COIL_UP)) && (input(SS_SCREW_UP)) && (!input(SS_QR_UP))
+           && (!input(SS_STAMP_UP)) && (!input(SS_L)) )
+                  output_low(SV_SLIDER);
+              
+      for(cnt = 0; cnt < TimeOut; cnt++)
+         {
+            if( (!input(SS_COIL_UP)) && (input(SS_SCREW_UP)) && (!input(SS_QR_UP)) && 
+                (!input(SS_STAMP_UP)) && (!input(SS_R)) ) 
+               {
+                  ret = TRUE;
+                  goto End_MOVE;
+               }
+            delay_ms(1);   
+         }
+    
+    ret = FALSE;
+    Display_CylinderError();
+    LED_RED();
+    Buzzer_Alarm(15);
+    output_high(SV_SLIDER);
+    
+    End_MOVE :     
+    return(ret);
+}
+
+//------------------------------------------------------------------------------
+//-------------------   MOVE INK TRAY TO ORIGIN 
+boolean MOVE_LEFT(void)
+{
+   boolean ret;
+    if( (!input(SS_COIL_UP)) && (input(SS_SCREW_UP)) && (!input(SS_QR_UP)) && 
+       (!input(SS_STAMP_UP)) && (!input(SS_R)) )
+         output_high(SV_SLIDER);
+      for(cnt = 0; cnt < TimeOut; cnt++)
+         {
+            if( (!input(SS_COIL_UP)) && (input(SS_SCREW_UP)) && (!input(SS_QR_UP)) && 
+              (!input(SS_STAMP_UP)) && (!input(SS_L)) )
+               {
+                  ret = TRUE;
+                  goto End_ORIGIN;
+               }
+            delay_ms(1);   
+         }
+         
+    ret = FALSE;
+    Display_CylinderError();
+    LED_RED();
+    Buzzer_Alarm(15);
+    output_low(SV_SLIDER);
+    
+    End_ORIGIN :     
+    return(ret);
+}
+
+
+
+
+//------------------------------------------------------------------------------
+//-------------------   MOVE INK TRAY FOR STAMP
+boolean MOVE_RIGHT2(void)
+{
+   boolean ret;
+                  
+    if( (!input(SS_COIL_UP)) && (input(SS_SCREW_UP)) && (!input(SS_QR_UP))
+           && (!input(SS_STAMP_UP))  )
+                  output_low(SV_SLIDER);
+              
+      for(cnt = 0; cnt < TimeOut; cnt++)
+         {
+            if( (!input(SS_COIL_UP)) && (input(SS_SCREW_UP)) && (!input(SS_QR_UP)) && 
+                (!input(SS_STAMP_UP)) ) 
+               {
+                  ret = TRUE;
+                  goto End_MOVE;
+               }
+            delay_ms(1);   
+         }
+    
+    ret = FALSE;
+    Display_CylinderError();
+    LED_RED();
+    Buzzer_Alarm(15);
+    output_high(SV_SLIDER);
+    
+    End_MOVE :     
+    return(ret);
+}
+
+//------------------------------------------------------------------------------
+//-------------------   MOVE INK TRAY TO ORIGIN 
+boolean MOVE_LEFT2(void)
+{
+   boolean ret;
+    if( (!input(SS_COIL_UP)) && (input(SS_SCREW_UP)) && (!input(SS_QR_UP)) && 
+       (!input(SS_STAMP_UP)) )
+         output_high(SV_SLIDER);
+      for(cnt = 0; cnt < TimeOut; cnt++)
+         {
+            if( (!input(SS_COIL_UP)) && (input(SS_SCREW_UP)) && (!input(SS_QR_UP)) && 
+              (!input(SS_STAMP_UP)) )
+               {
+                  ret = TRUE;
+                  goto End_ORIGIN;
+               }
+            delay_ms(1);   
+         }
+         
+    ret = FALSE;
+    Display_CylinderError();
+    LED_RED();
+    Buzzer_Alarm(15);
+    output_low(SV_SLIDER);
+    
+    End_ORIGIN :     
+    return(ret);
+}
+
+
+
+
+
+//##############################################################################
+// 
+//                  OPTION PART 
+
+//------------------------------------------------------------------------------
+
+//-------------------  
+void Clear_LCD(void)
+{
+  lcd_gotoxy(1,1); printf(lcd_putc,"                   ");
+  lcd_gotoxy(1,2); printf(lcd_putc,"                   ");
+  lcd_gotoxy(1,3); printf(lcd_putc,"                   ");
+  lcd_gotoxy(1,4); printf(lcd_putc,"                   ");
+}
+
+//-------------------  
+void Trig_Counter(void)
+{
+   output_low(TRIG);   delay_ms(250);
+   output_high(TRIG);  delay_ms(10);
+}
+
+
+//------------------------------------------------------------------------------
+//-------------------   BUZZER ALARM FOR RESET OR INITIAL MACHINE STATUS
+void Start_Buzzer(void)
+{
+   byte cnt;
+      for(cnt = 0; cnt < 2; cnt++)
+         {
+            output_low(BUZZER);   delay_ms(120);
+            output_high(BUZZER);  delay_ms(30);
+         }
+}
+
+//------------------------------------------------------------------------------
+//-------------------   
+void Buzzer_Config(void)
+{
+   byte cnt;
+   
+      for(cnt = 0; cnt < 2; cnt++)
+         {
+            output_low(BUZZER);   delay_ms(100);
+            output_high(BUZZER);  delay_ms(25);
+         }
+         
+      output_low(BUZZER);   delay_ms(270);
+      output_high(BUZZER);  delay_ms(80);  
+      
+      output_low(BUZZER);   delay_ms(100);
+      output_high(BUZZER);  delay_ms(25);
+}
+
+//------------------------------------------------------------------------------
+//-------------------   SHOW STATUS FROM CLICK THE BUTTON
+void Buzzer_Beep(void)
+{
+   output_low(BUZZER); delay_ms(100);
+   output_high(BUZZER);  delay_ms(25);
+}
+
+//------------------------------------------------------------------------------
+//-------------------   ALARM FOR LONG VOLUME
+void Buzzer_LongBeep(void)
+{
+   output_low(BUZZER);   delay_ms(1000);
+   output_high(BUZZER);  delay_ms(125);
+}
+
+//------------------------------------------------------------------------------
+//-------------------   BUZZER ALARM 
+void Buzzer_Alarm(byte tot) 
+{    
+    LED_RED();
+    output_low(BUZZER);   delay_ms(1500);
+    output_high(BUZZER);  delay_ms(70);
+      for(; tot > 0 ; tot--)
+         {
+            output_low(BUZZER);   delay_ms(90);
+            output_high(BUZZER);  delay_ms(20);
+         }
+}
+
+//------------------------------------------------------------------------------
+//-------------------   Display Error
+void Display_CylinderError(void) 
+{    
+    lcd_gotoxy(1,2);
+    printf(lcd_putc," Mistake...         ");
+    
+    lcd_gotoxy(1,3);
+    printf(lcd_putc," CYLINDER IS ERROR! ");
+    
+}
+
+//------------------------------------------------------------------------------
+//-------------------   CLEAR JUDGEMENT STATUS OF OK AND NG
+void Clear_Led(void) 
+{
+   output_high(LEDR); 
+   output_high(LEDG);
+   output_high(RELAY);   
+   output_high(BUZZER);
+   delay_ms(10);
+}  
+
+//------------------------------------------------------------------------------
+//-------------------   DISPLAY STATUS FOR MACHINE IS READYING
+void Diplay_Ready(void)
+{
+   lcd_gotoxy(1,1); printf(lcd_putc,"   << MACHINE >>    ");
+   lcd_gotoxy(1,2); printf(lcd_putc,"Ready...            ");
+   lcd_gotoxy(1,3); printf(lcd_putc,"                    ");
+   lcd_gotoxy(1,4); printf(lcd_putc,"                    ");
+   delay_ms(50);
+}
+
+//------------------------------------------------------------------------------
+//-------------------   STATUS OK
+void LED_GREEN(void)
+{
+   output_low(LEDG);  delay_ms(100);
+   output_high(LEDR); delay_ms(100);
+}
+
+//------------------------------------------------------------------------------
+//-------------------   STATUS NG
+void LED_RED(void)
+{   
+   output_low(LEDR);  delay_ms(100);
+   output_high(LEDG); delay_ms(100);
+}
+
+//------------------------------------------------------------------------------
+//-------------------   Judgement Coil
+boolean AdjudgeCoils(int8 Jc)
+{
+   boolean ret = FALSE;
+   switch(Jc)
+      {
+         case 0:  ret = TRUE;
+         break;
+         
+         case 1:
+                  delay_ms(150);
+                  ret = FALSE;
+                  LED_RED();
+                  lcd_gotoxy(1,1); printf(lcd_putc,"Coil%u is NG         ",Jc);                  
+                  Buzzer_Alarm(15);
+                  //output_low(SV_SLIDER);  delay_ms(780);
+         break;
+         
+         case 2:
+                  delay_ms(150);
+                  ret = FALSE;
+                  LED_RED();
+                  lcd_gotoxy(1,1); printf(lcd_putc,"Coil%u is NG         ",Jc);                  
+                  Buzzer_Alarm(15);
+                  //output_low(SV_SLIDER);  delay_ms(780); 
+         break;
+         
+         case 3:
+                  delay_ms(150);
+                  ret = FALSE;
+                  LED_RED();
+                  lcd_gotoxy(1,1); printf(lcd_putc,"Coil%u is NG         ",Jc);                  
+                  Buzzer_Alarm(15);
+                  //output_low(SV_SLIDER);  delay_ms(780); 
+         break;
+         
+         case 4:
+                  delay_ms(150);
+                  ret = FALSE;
+                  LED_RED();
+                  lcd_gotoxy(1,1); printf(lcd_putc,"Coil1-2 is NG         ");                  
+                  Buzzer_Alarm(15);
+                  //output_low(SV_SLIDER);  delay_ms(780); 
+         break;
+         
+        case 5:
+                  delay_ms(150);
+                  ret = FALSE;
+                  LED_RED();
+                  lcd_gotoxy(1,1); printf(lcd_putc,"Coil1-3 is NG         ");                  
+                  Buzzer_Alarm(15);
+                  //output_low(SV_SLIDER);  delay_ms(780); 
+         break;
+         
+         case 6:
+                  delay_ms(150);
+                  ret = FALSE;
+                  LED_RED();
+                  lcd_gotoxy(1,1); printf(lcd_putc,"Coil2-3 is NG         ");                  
+                  Buzzer_Alarm(15);
+                  //output_low(SV_SLIDER);  delay_ms(780); 
+         break;
+         
+         
+         
+         case 7:
+                  delay_ms(150);
+                  ret = FALSE;
+                  LED_RED();
+                  lcd_gotoxy(1,1); printf(lcd_putc,"Coil 1-3 is NG       ");                  
+                  Buzzer_Alarm(15);
+                  //output_low(SV_SLIDER);
+         break;
+      }
+      
+    return(ret);
+}
+
+
+
+
+
+//=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+//                                                   =-
+//                Check Coils Resistance             -=
+//                                                   =-
+//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+boolean Resistance3(void)
+{
+//float Vbe = 0.00488;
+   float Value1 ;
+   float Value2;
+   float Value3 ;
+   float V1 ;
+   float V2 ;
+   float V3 ;
+   float R1 ;
+   float R2 ;
+   float R3 ;
+   float Im ;
+   float Im3;
+   boolean r1_flag,r2_flag,r3_flag;
+   boolean Judge = FALSE;
+   byte   I ;
+   
+      Clear_LCD();
+      output_high(RELAY) ;
+      delay_ms(500) ;
+      
+//******************************************************************************
+// Coil Judgement -> Judge = 0 All Coils is OK
+//                   Judge = 1 First Coil is NG
+//                   Judge = 2 Second Coil is NG
+//                   Judge = 3 All Coil is NG
+//******************************************************************************
+    
+      /// CHECK THE FIRST COIL AND SECOND COIL  
+      r1_flag = FALSE;
+      r2_flag = FALSE;
+      r3_flag = FALSE;
+      Value1 = 0 ;
+      Value2 = 0 ;
+      Value3 = 0 ;
+      V1 = 0 ;
+      V2 = 0 ;
+      V3 = 0 ;
+      R1 = 0; 
+      R2 = 0; 
+      R3 = 0;
+      for(I = 0 ;I < 20 ;I++) 
+         {
+            set_adc_channel(0);
+            delay_us(20);
+            Value1 = read_adc();
+            V1 = V1+(Value1*(5.01/1024));
+            delay_ms(5);
+            
+            set_adc_channel(1);
+            delay_us(20);
+            Value2 = read_adc();
+            V2 = V2+(Value2*(5.01/1024));
+            delay_ms(5);
+            
+            set_adc_channel(2);
+            delay_us(20);
+            Value3 = read_adc();
+            V3 = V3+(Value3*(5.01/1024));
+            delay_ms(5);
+         }
+     
+      V1 = (V1/20);
+      Im = (5 - V1)/100;
+      R1 = V1/Im;
+      
+      V2 = (V2/20);
+      Im = (5 - V2)/100;
+      R2 = V2/Im;   
+      
+      V3 = (V3/20);
+      Im3 = (5 - V3)/100;
+      R3 = (V3/Im3)-3; 
+      
+      
+      
+      delay_ms(100);
+      lcd_gotoxy(1,2); printf(lcd_putc," C1 = %f",R1);
+      lcd_gotoxy(1,3); printf(lcd_putc," C2 = %f",R2);      
+      lcd_gotoxy(1,4); printf(lcd_putc," C3 = %f",R3);           
+            
+       /// Adjudge Coils Value
+      if ( (R1 >= SPEC.C1l) && (R1 <= SPEC.C1h) ) 
+           r1_flag = TRUE;
+      else r1_flag = FALSE;
+            
+      if ( (R2 >= SPEC.C2l) && (R2 <= SPEC.C2h) )
+           r2_flag = TRUE;
+      else r2_flag = FALSE;
+      
+     if ( (R3 >= SPEC.C3l) && (R3 <= SPEC.C3h) )
+           r3_flag = TRUE;
+      else r3_flag = FALSE;
+            
+
+     output_low(RELAY) ;
+     delay_ms(100) ;      
+      
+     if( (r1_flag == TRUE) && (r2_flag == TRUE) && (r3_flag == TRUE) )
+        {
+            Judge = AdjudgeCoils(0);
+            InsertData(R1,R2,R3);
+        }
+      
+     else if( (r1_flag == FALSE) && (r2_flag == TRUE) && (r3_flag == TRUE) )
+            Judge = AdjudgeCoils(1);
+        
+     else if( (r1_flag == TRUE) && (r2_flag == FALSE) && (r3_flag == TRUE) )
+            Judge = AdjudgeCoils(2);
+            
+     else if( (r1_flag == TRUE) && (r2_flag == TRUE) && (r3_flag == FALSE) )
+            Judge = AdjudgeCoils(3);       
+            
+     else if( (r1_flag == FALSE) && (r2_flag == FALSE) && (r3_flag == TRUE) )
+            Judge = AdjudgeCoils(4);  
+            
+     else if( (r1_flag == FALSE) && (r2_flag == TRUE) && (r3_flag == FALSE) )
+            Judge = AdjudgeCoils(5);
+            
+     else if( (r1_flag == TRUE) && (r2_flag == FALSE) && (r3_flag == FALSE) )
+            Judge = AdjudgeCoils(6);       
+        
+     else if( (r1_flag == FALSE) && (r2_flag == FALSE) && (r3_flag == FALSE) )
+            Judge = AdjudgeCoils(7);
+     
+     
+      Value1 = 0;
+      Value2 = 0;
+      Value3 = 0;
+      V1 = 0;  V2 = 0;  V3 = 0;
+      R1 = 0;  R2 = 0;  R3 = 0;
+
+     Return(Judge);
+}
+
+
+//------------------------------------------------------------------------------
+//-------------------   CHECK SCREW ON SHUTTER
+boolean Check_Screw(void)
+{
+  boolean resp = FALSE;
+   
+   switch(SPEC.TypeScr)
+      {
+         case 1:  
+                 if( (!input(SS_SCREW1)) && (!input(SS_SCREW2)) && (!input(SS_SCREW3)) 
+                    && (!input(SS_SCREW4)) )
+                        resp = TRUE;
+                 else   
+                 {
+                     Clear_LCD(); delay_ms(100);
+                     LED_RED();
+                     lcd_gotoxy(1,1); printf(lcd_putc,"Coils is OK          ");
+                     lcd_gotoxy(1,1); printf(lcd_putc,"Screw is NG          ");
+                     Buzzer_Alarm(10);
+                     resp = FALSE;
+                 }
+         break;
+         
+         case 2:  resp = TRUE; //Buzzer_Config();
+         break;
+         
+         default: resp = TRUE; //Buzzer_Config();
+         break;
+      }
+      
+   return(resp);
+}
+
+
+
+//************************** INSERT DATA TO COMPUTER FOR KEEP TO DATA BASE
+void InsertData(float a, float b, float c)
+{     
+    //printf("[%f,%f,%f]\r",a,b,c);
+    printf("[%f\r",a);
+    printf("[%f\r",b);
+    printf("[%f\r",c);
+}
+
+
+//------------------------------------------------------------------------------
+//-------------------   CHECK STATUS OF I/O FOR CONTROL PROCESS
+void _StatusIO_(void)
+{   
+   sw = GetStatus_SS(SW_ID);
+   //lcd_gotoxy(1,3); printf(lcd_putc,"SW %02X",sw);
+ 
+   switch(sw)
+   {           
+      case 0x78: //-- TEST SILINER ON A-XIS PIN AND GT.  (Blue Switch) >>
+                  delay_ms(200);
+                  while( sw == 0x78) { sw = GetStatus_SS(SW_ID); }
+                  if( (!input(SS_COIL_UP)) && (!input(SS_STAMP_UP)) && (!input(SS_UNLOCK)) &&
+                      (!input(SS_QR_UP)) && (!input(SS_L))  )
+                         {
+                              if(MOVE_RIGHT() == TRUE)
+                              {
+                                 delay_ms(750);
+                                 if(MOVE_PIN() == TRUE)
+                                 {
+                                    MOVE_GT();
+                                    Resistance3();
+                                 }
+                              }
+                         }
+                  else if( (!input(SS_COIL_DOWN)) && (!input(SS_STAMP_UP)) && 
+                           (!input(SS_UNLOCK)) && (!input(SS_QR_UP))  && (!input(SS_R)) ) 
+                         {
+                              if(ORIGIN_PIN() == TRUE)
+                              {
+                                 if(ORIGIN_GT() == TRUE)
+                                 {
+                                    delay_ms(750);
+                                    MOVE_LEFT();
+                                 }
+                              }
+                         }
+                  else
+                     {
+                        Display_CylinderError();
+                        Buzzer_Alarm(10);
+                     }                 
+      break;
+      
+      case 0xD8: //-- TEST SILINDER ON A-XIS STAMP. (White Switch)  >>>>
+                  delay_ms(200);
+                  while( sw == 0xD8) { sw = GetStatus_SS(SW_ID); }
+                  if( (!input(SS_COIL_UP)) && (!input(SS_STAMP_UP)) && (!input(SS_UNLOCK)) &&
+                      (!input(SS_QR_UP)) && (input(SS_SCREW_UP)) && (!input(SS_L)) )                         
+                         MOVE_STAMP();
+                  else if( (!input(SS_COIL_UP)) && (!input(SS_STAMP_DOWN)) && (!input(SS_UNLOCK)) &&
+                      (!input(SS_QR_UP)) && (input(SS_SCREW_UP)) && (!input(SS_L)) ) 
+                         ORIGIN_STAMP();
+                  else
+                     {
+                        Display_CylinderError();
+                        Buzzer_Alarm(10);
+                     }
+
+      break;   
+      
+      case 0xB8: //-- TEST SILINDER ON A-XIS QR CODE . (Red Switch) >>>
+                  delay_ms(200);
+                  while( sw == 0xB8) { sw = GetStatus_SS(SW_ID); }
+                  if( (!input(SS_COIL_UP)) && (!input(SS_STAMP_UP)) && (!input(SS_UNLOCK)) &&
+                      (!input(SS_QR_UP)) && (input(SS_SCREW_UP)) && (!input(SS_L)) )
+                         MOVE_QR();
+                  else if( (!input(SS_COIL_UP)) && (!input(SS_STAMP_UP)) && (!input(SS_UNLOCK)) &&
+                      (!input(SS_QR_DOWN)) && (input(SS_SCREW_UP)) && (!input(SS_L)) ) 
+                         ORIGIN_QR();
+                  else
+                     {
+                        Display_CylinderError();
+                        Buzzer_Alarm(10);
+                     }
+      break; 
+      
+      case 0xE8: //-- TEST SILINDER MOVE CHECK ON A-XIS X  (Yellow Switch)
+                  delay_ms(200);
+                  while( sw == 0xE8) { sw = GetStatus_SS(SW_ID); }
+                  if( (!input(SS_COIL_UP)) && (!input(SS_STAMP_UP)) && (!input(SS_UNLOCK)) &&
+                      (!input(SS_QR_UP)) && (input(SS_SCREW_UP)) && (!input(SS_L)) )
+                         MOVE_RIGHT();
+                  else if( (!input(SS_COIL_UP)) && (!input(SS_STAMP_UP)) && (!input(SS_UNLOCK)) &&
+                      (!input(SS_QR_UP)) && (input(SS_SCREW_UP)) && (!input(SS_R)) ) 
+                         MOVE_LEFT();
+                  else
+                     {
+                        Display_CylinderError();
+                        Buzzer_Alarm(10);
+                     }
+      break;    
+      
+      case 0xF0: //-- TEST SILINDER ON A-XIS BLOCK   (Black Switch)
+                  delay_ms(200);
+                  while( sw == 0xF0) { sw = GetStatus_SS(SW_ID); }
+                  if( (!input(SS_COIL_UP)) && (!input(SS_STAMP_UP)) && (!input(SS_UNLOCK)) &&
+                      (!input(SS_QR_UP)) && (input(SS_SCREW_UP)) && (!input(SS_L)) )
+                     {
+                        if(MOVE_RIGHT() == TRUE)
+                        {
+                           delay_ms(550);
+                           MOVE_BLOCK();
+                        }
+                     }
+                  else if( (!input(SS_COIL_UP)) && (!input(SS_STAMP_UP)) && (!input(SS_LOCK)) &&
+                      (!input(SS_QR_UP)) && (input(SS_SCREW_UP)) && (!input(SS_R)) ) 
+                        {
+                           if(ORIGIN_BLOCK() == TRUE)
+                           {
+                              delay_ms(350);
+                              MOVE_LEFT();
+                           }
+                        }
+                  else
+                     {
+                        Display_CylinderError();
+                        Buzzer_Alarm(10);
+                     }
+      break; 
+      
+      case 0x5F: //-- Access Mode Setting Spec And JudgeMent Spec
+                  delay_ms(200);
+                  while( sw == 0x5F) { sw = GetStatus_SS(SW_ID); }
+                  Rob.ModeI = 1;
+      break;       
+   }
+   
+     
+}
+
+//------------------------------------------------------------------------------
+//-------------------   STAMP SHUTTER ONLY
+void StampOnly(void)
+{
+  if(MOVE_RIGHT() == TRUE)
+   {
+      delay_ms(350);
+      if(MOVE_BLOCK() == TRUE)
+      {
+         delay_ms(250);
+         if(MOVE_LEFT2() == TRUE)
+         {
+            delay_ms(500);
+            if(MOVE_STAMP() == TRUE)
+            {
+               //delay_ms(200);
+               if(ORIGIN_STAMP() == TRUE)
+               {
+                  //delay_ms(100);
+                  if(MOVE_RIGHT2() == TRUE)
+                  {
+                     delay_ms(250);
+                     if(ORIGIN_BLOCK() == TRUE)
+                     {
+                        delay_ms(250);
+                        if(MOVE_LEFT() == TRUE)
+                        {
+                           delay_ms(500);
+                           if(MOVE_STAMP() == TRUE)
+                           {
+                             ORIGIN_STAMP();
+                             Trig_Counter(); delay_ms(150);                              
+                           }
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+//-------------------   INITIAL SENSOR
+void Initial_SenSor(void) 
+{
+   Rob.Display_Spec = TRUE;
+}
+
+//------------------------------------------------------------------------------
+//-------------------   
+void OperateAll(void)
+{  
+   if(MOVE_RIGHT() == TRUE)
+   {
+      delay_ms(500);
+      if(MOVE_QR() == TRUE)
+      {
+         delay_ms(270);
+         printf("%s",QR_Packet);
+         Rob.Ack_Qr = FALSE;
+         if(ORIGIN_QR() == TRUE)
+         {               
+              delay_ms(990);
+              if(Rob.Get_Qr == TRUE)
+               {
+                   Rob.Get_Qr = FALSE;                                                         
+                   Check_R_Stamp();
+               }
+               
+               else
+               {
+                  LED_RED();
+                  Clear_LCD(); delay_ms(200);                           //
+                  lcd_gotoxy(1,1); printf(lcd_putc,"QR Code is NG...    ");
+                  Buzzer_Alarm(10);
+               }
+            
+         }
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
+//-------------------   
+void Check_R_Stamp(void)
+{        
+   if(MOVE_RIGHT() == TRUE)
+   {
+      delay_ms(550);
+      if(MOVE_PIN() == TRUE)
+      {
+         delay_ms(150);
+         if(MOVE_GT() == TRUE)
+         {
+            Rob.ResCoils = Resistance3();
+            //delay_ms(350);
+            if(Rob.ResCoils == TRUE)
+            {
+               Rob.ResCoils = FALSE;
+               Rob.ResScrew = Check_Screw();
+               if(Rob.ResScrew == TRUE)
+               {
+                  Rob.ResScrew = FALSE;
+                  ORIGIN_PIN(); ORIGIN_GT(); //delay_ms(350);
+                  LED_GREEN();
+                  StampOnly();
+               }
+
+            }
+            
+            
+         }
+                          
+      }
+   }
+}
+
+
+//******************************************************************************
+//****************  CLEAR STAGE OF ROBOT TO INITIAL
+void Initial_StageRobot(void)
+{
+   if( !input(SS_R) )
+      {
+         output_low(SV_SLIDER); delay_ms(250);
+         output_high(SV_COILS); output_high(SV_SCREW);  output_high(SV_QR);   delay_ms(199);
+         output_high(SV_STAMP);  delay_ms(100);         output_high(SV_LOCK); delay_ms(150);
+         output_high(SV_SLIDER); delay_ms(100);         
+      }
+      
+   else if( !input(SS_L) )
+      {
+         output_high(SV_COILS); output_high(SV_SCREW);  output_high(SV_QR);   delay_ms(199);
+         output_high(SV_STAMP);  delay_ms(100);         output_high(SV_LOCK); delay_ms(150);
+         output_high(SV_SLIDER); delay_ms(100);        
+      }       
+      
+   else 
+      {
+         output_high(SV_COILS); output_high(SV_SCREW);  output_high(SV_QR);   delay_ms(199);
+         output_high(SV_STAMP);  delay_ms(100);         output_high(SV_LOCK); delay_ms(150);
+         output_high(SV_SLIDER); delay_ms(100);  
+      }
+}
+
+

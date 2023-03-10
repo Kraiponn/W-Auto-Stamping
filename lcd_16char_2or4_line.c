@@ -1,0 +1,109 @@
+
+// As defined in the following structure the pin connection is as follows:
+//     x0  Not usage
+//     x1  rs
+//     x2  rw
+//     x3  enable
+//     x4  D4
+//     x5  D5
+//     x6  D6
+//     x7  D7
+//
+//   LCD pins D0-D3 are not used and PIC D3 is not used.
+//************************************************************************
+
+struct lcd_pin_map {
+         BOOLEAN unused;
+         BOOLEAN  rs;
+         BOOLEAN  rw;
+         BOOLEAN  enable;
+         int      data : 4;
+  } lcd;
+  
+  #byte lcd  = 0xF87
+  #define set_tris_lcd(x)   set_tris_h(x)
+
+  #define lcd_type 2              // 0=5x7 1 line, 1=5x10 1 line, 2=5x7 2 line
+  #define lcd_First_Line   0x00     // LCD RAM address for the first line
+  #define lcd_Second_Line  0x40     // LCD RAM address for the second line
+  #define lcd_Third_Line   0x14     // LCD RAM address for the third line
+  #define lcd_Forth_Line   0x54     // LCD RAM address for the forth line
+
+  byte const LCD_INIT_STRING[4] = {0x20 | (lcd_type << 2), 0x0c, 1, 6};
+  // Initial LCD
+
+ struct lcd_pin_map const LCD_WRITE = {0, 0, 0, 0};
+ //struct lcd_pin_map const LCD_READ = {0, 0, 0, 15};   // 15 =  1111
+ // Setting the I/O port direction register.
+
+ void lcd_send_nibble( byte n ) 
+ {
+       lcd.data = n;
+       delay_cycles(1);
+       //lcd.enable = 1;
+       output_high(PIN_H3);
+       delay_us(2);
+       //lcd.enable = 0;
+       output_low(PIN_H3);
+ }
+
+ void lcd_send_byte( byte address, byte n) 
+ {
+       lcd.rs = 0;
+       delay_us(500);
+       lcd.rs = address;
+       delay_cycles(1);
+       //lcd.enable = 0;
+       output_low(PIN_H3);
+       lcd_send_nibble(n >> 4);
+       lcd_send_nibble(n & 0x0f);
+ }
+
+ void lcd_gotoxy( byte x, byte y) 
+ {
+    byte address;
+          
+       switch(y)
+        {
+            case 1: address = lcd_First_Line;
+            break;
+            case 2: address = lcd_Second_Line;
+            break;
+            case 3: address = lcd_Third_Line;
+            break;
+            case 4: address = lcd_Forth_Line;
+            break;
+        }
+       address += x-1;
+       lcd_send_byte(0,0x80|address);
+ }
+
+ void lcd_init() 
+ {
+       byte i;
+       set_tris_lcd(LCD_WRITE);
+       lcd.rs = 0;
+       //lcd. enable = 0;
+       output_low(PIN_H3);
+       delay_ms(15);
+       for (i=1; i<=3; ++i) {
+           lcd_send_nibble(3);
+           delay_ms(5);
+       }
+       lcd_send_nibble(2);
+       for (i=0; i<=3; ++i)
+           lcd_send_byte(0,LCD_INIT_STRING[i]);
+ }
+
+ void lcd_putc( char c ) 
+ {
+    switch (c) 
+       {
+          case '\f'   : lcd_send_byte(0, 1);
+                        delay_ms(2);            break;
+          case '\n'   : lcd_gotoxy(1,2);        break;
+          case '\b'   : lcd_send_byte(0,0x10);  break;
+          //case '\m'   : lcd_gotoxy(9,2);        break;
+          default     : lcd_send_byte(1,c);     break;
+       }
+ }

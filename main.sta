@@ -1,0 +1,188 @@
+
+ROM used: 18724 (14%)
+          18724 (14%) including unused fragments
+
+          5 Average locations per line
+          13 Average locations per statement
+
+RAM used: 94 (2%) at main() level
+          181 (5%) worst case
+
+Stack used: 12 worst case (out of 29 total available)
+
+Lines Stmts  %   Files
+----- ----- ---  -----
+  381   164  11  main.c
+  149     5   0  main.h
+  450     0   0  C:\Program Files\PICC\devices\18F8720.h
+  110    44   3  lcd_16char_2or4_line.c
+   69     6   0  RS232_Lib.c
+   37     0   0  C:\Program Files\PICC\drivers\stdio.h
+  417     0   0  C:\Program Files\PICC\drivers\string.h
+   28     0   0  C:\Program Files\PICC\drivers\stddef.h
+   28     0   0  C:\Program Files\PICC\drivers\ctype.h
+ 1151   659  46  stamp_lib.c
+  667   557  39  Gb_Spec.c
+----- -----
+ 3487  1435 Total
+
+Page ROM  %  RAM   Vol Diff  Functions:
+---- --- --- ---   --- ----  ----------
+0     40   0   1             @delay_ms1
+0     32   0   1             @delay_us1
+0     34   0   0             @const64
+0     32   0   1   112  2.2  lcd_send_nibble
+0     54   0   3   213  3.8  lcd_send_byte
+0     56   0   4   336  6.0  lcd_gotoxy
+0     50   0   0             @goto10055
+0     88   0   3   369  4.7  lcd_init
+0     68   0   1   272  4.1  lcd_putc
+0     90   0   3             @I2C_READ_1
+0     94   0   1             @I2C_WRITE_1
+0     12   0   0    18  1.0  getc1USART
+0     12   0   1    24  1.2  putc1USART
+0     12   0   0    18  1.0  getc2USART
+0     74   0   3   198  2.0  GetStatus_SS
+0     82   0   1   385  5.6  MOVE_STAMP
+0     82   0   1   385  5.6  ORIGIN_STAMP
+0     76   0   1   385  5.6  MOVE_PIN
+0     82   0   1   396  5.6  ORIGIN_PIN
+0     76   0   1   380  5.6  MOVE_GT
+0     82   0   1   380  5.6  ORIGIN_GT
+0     82   0   1   396  5.6  MOVE_BLOCK
+0     82   0   1   396  5.6  ORIGIN_BLOCK
+0     82   0   1   385  5.6  MOVE_QR
+0     82   0   1   385  5.6  ORIGIN_QR
+0    108   0   1   703  6.2  MOVE_RIGHT
+0    114   0   1   703  6.2  MOVE_LEFT
+0    108   0   1   621  6.2  MOVE_RIGHT2
+0    108   0   1   621  6.2  MOVE_LEFT2
+0    128   0   1   255  1.8  Clear_LCD
+0     50   0   0             @const314
+0     24   0   0    72  1.2  Trig_Counter
+0     34   0   1   163  3.1  Start_Buzzer
+0     82   0   2   359  3.3  Buzzer_Config
+0     22   0   0    72  1.2  Buzzer_Beep
+0     32   0   1    72  1.2  Buzzer_LongBeep
+0     60   0   2   240  2.8  Buzzer_Alarm
+0     66   0   1   117  1.6  Display_CylinderError
+0     52   0   0             @const320
+0     52   0   0             @const321
+0     16   0   0    92  1.3  Clear_Led
+0    138   0   1   280  1.8  Diplay_Ready
+0     52   0   0             @const322
+0     52   0   0             @const323
+0     52   0   0             @const324
+0     24   0   0    72  1.2  LED_GREEN
+0     22   0   0    72  1.2  LED_RED
+0    544   1   4  1780  4.9  AdjudgeCoils
+0     52   0   0             @const329
+0     40   0   3             @DIV88
+0    108   0   2             @PRINTF_U_80
+0     54   0   0             @const338
+0     54   0   0             @const339
+0     54   0   0  4600 10.3  @const340
+0     52   0   0             @const341
+0     58   0   0             @goto11127
+0   2124   6  50  5245 10.2  Resistance3
+0     54   0   2             @ITOF
+0    242   1  11             @MULFF
+0    618   2  16             @ADDFF
+0    346   1  14             @DIVFF
+0     40   0   0             @const370
+0     62   0   5             @FTOSD
+0    122   0  13             @DIV3232
+0    390   1  13             @PRINTF_L32D_80FPFPF
+0     40   0   0   673  7.5  @const379
+0     40   0   0             @const380
+0    118   0  10             @FLT
+0    150   0   2   673  7.5  Check_Screw
+0     52   0   0             @const386
+0     52   0   0             @const387
+0    130   0  12   119  2.0  InsertData
+0    392   1  13  5041  7.4  @PRINTF_L32D_38400_31766_31767FPFPF
+0    682   2   1  5041  7.4  _StatusIO_
+0    156   0   1   539  2.4  StampOnly
+0      6   0   0    31  1.7  Initial_SenSor
+0    174   0   2   525  4.2  OperateAll
+0     52   0   0  3297  8.9  @const395
+0     92   0   1   464  3.3  Check_R_Stamp
+0    170   0   0   927  2.9  Initial_StageRobot
+0    924   2   1  3297  8.9  Config_Type
+0     52   0   0             @const414
+0     52   0   0             @const417
+0     52   0   0             @const418
+0     52   0   0             @const419
+0     52   0   0             @const423
+0     52   0   0             @const424
+0     52   0   0             @const428
+0    202   1   1   603  4.7  Check_InterFace
+0     52   0   0             @const429
+0     52   0   0             @const430
+0     52   0   0   940  5.3  @const431
+0    324   1   1   940  5.3  Setting_Screw
+0     52   0   0             @const434
+0     52   0   0  1317  5.3  @const437
+0     52   0   0             @const438
+0    372   1   2  1317  5.3  Setting_SpecScrew
+0     52   0   0   814  4.3  @const444
+0     52   0   0             @const445
+0    422   1   2   814  4.3  Save_TypeScrew
+0     52   0   0             @const447
+0     52   0   0   385  5.0  @const450
+0     52   0   0             @const451
+0    144   0   1   385  5.0  Read_TypeScrew
+0     52   0   0   777  3.8  @const453
+0     52   0   0             @const454
+0    430   1   2   777  3.8  Setting_Coils
+0     52   0   0             @const456
+0     56   0   0             @const457
+0    234   1   9  6977  7.4  @PRINTF_LD_80
+0     56   0   0             @const460
+0     56   0   0             @const461
+0   1152   3   1  6977  7.4  Setting_SpecCoils
+0    672   2   3  1468  4.4  Save_SpecCoils
+0     52   0   0             @const477
+0     52   0   0             @const478
+0     50   0   0             @const479
+0     38   0   0   666  2.8  @const482
+0     52   0   0             @const483
+0    460   1   2   666  2.8  Read_SpecCoils
+0     12   0   0    56  1.6  ConfigTimer0
+0    158   0   1   684  3.8  Initial_Robot
+0     52   0   0   399  2.4  @const535
+0     52   0   0  1708  7.8  @const536
+0     46   0   0             @const537
+0     82   0   1   399  2.4  Initial_Port
+0    298   1   1  1708  7.8  ProcessMode
+0     50   0   0             @const538
+0     50   0   0    82  2.8  @goto12717
+0     98   0   0   818  7.2  Rx1_Isr
+0    112   0   4   358  4.7  Rx2_Isr
+0     20   0   0    82  2.8  Tim0_Isr
+0     22   0   0    82  2.8  Reset_Isr
+0    324   1   1   629  4.7  MAIN
+0     38   0   0             @const551
+
+Program metrics:
+    Functions               78
+    Statements              1435
+    Comments                695
+    Volume (V)              134737
+    Difficilty (D)          352.6
+    Effort to implement (E) 47512089
+    Time to implement (T)   733 hours, 13 minutes
+    Est Delivered Bugs (B)  44
+    Cyclomatic Complexity   276
+    Maintainability (MI)    34
+
+ Segment     Used  Free
+-----------  ----  ----
+00000-00002     4  0  
+00004-00006     0  4  
+00008-000C8   194  0  
+000CA-0FFFE  18526  46808  
+10000-1FFFE     0  65536  
+
+
+

@@ -1,0 +1,33 @@
+[PROJECT]
+Target=C:\My_Wotks\Project\New Program 2012 Update\3064\Stamping Process\Box Program\main.hex
+Development_Mode=
+Processor_Text=PIC18F8720
+ToolSuite=CCS
+Processor=0xA872
+[C:\My_Wotks\Project\New Program 2012 Update\3064\Stamping Process\Box Program\main]
+Type=4
+Path=
+FileList=
+BuildTool=
+OptionString=
+AdditionalOptionString=
+[mru-list]
+1=C:\My_Wotks\Project\New Program 2012 Update\3064\Stamping Process\Box Program\main.c
+[Windows]
+0=0000 %S 0 0 796 451 3 0
+[Opened Files]
+1=E:\Work NCTC\Window\Stamping New Ver(28-08-2012)\main.c
+2=E:\Work NCTC\Window\Stamping New Ver(28-08-2012)\stamp_lib.c
+3=E:\Work NCTC\Window\Stamping New Ver(28-08-2012)\Gb_Spec.c
+4=C:\Program Files\PICC\devices\18F8720.h
+5=E:\Work NCTC\Window\Stamping New Ver(28-08-2012)\main.h
+6=
+7=C:\My_Wotks\Project\New Program 2012 Update\AFE-3196\Stamping New Ver(28-08-2012)\lcd_16char_2or4_line.c
+8=C:\Program Files\PICC\drivers\string.h
+9=
+[Target Data]
+OptionString=-p +FH
+FileList=C:\My_Wotks\Project\New Program 2012 Update\AFE-3196\Stamping New Ver(28-08-2012)\main.c
+[Units]
+Count=1
+1=main.c (main)
